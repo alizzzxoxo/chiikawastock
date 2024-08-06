@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>庫存數量</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    /* 添加新的样式规则用于图像按钮 */
+    .update-button {
+      padding: 0;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      margin: 5px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: url("https://storage.googleapis.com/sticker-prod/bLFvCEIZqTkPo97M8Dpz/cover.thumb256.webp"); /* 替换为您喜欢的图像的URL */
+      background-size: cover;
+      background-position: center;
+      width: 150px; /* 调整按钮的宽度 */
+      height: 150px; /* 调整按钮的高度 */
+    }
+
+    .update-button:hover {
+      background-color: transparent;
+      opacity: 0.8;
+    }
+
+    .input-container {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .input-row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .inventory p.quantity {
+      font-size: 22px; /* 调整库存数量文字的字体大小 */
+    }
+
+    /* 添加新的样式规则用于数量值颜色 */
+    .quantity-value {
+      font-size: 22px;
+      /* 默认颜色为黑色 */
+      color: black;
+    }
+
+    .quantity-value.red {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>輸入商品網址點擊“Chiikawa”來獲取最新庫存量</h1>
+  <form method="POST" action="/">
+    <div class="input-container">
+      <textarea name="url" id="url-input" placeholder="輸入商品的網址，每行一個" style="width: 1000; resize: none;">{{ savedUrls }}</textarea>
+    </div>
+    <br>
+    <!-- 将按钮更改为图像按钮 -->
+    <button type="submit" class="update-button"></button>
+  </form>
+  <br>
+  {% if inventory_data %}
+    <div class="inventory">
+      <h2>庫存數量：</h2>
+      <ul>
+        {% for data in inventory_data %}
+          <li>
+            <h3>{{ data['title'] }}</h3>
+            <p>{{ data['vendor'] }}</p>
+            <p class="quantity">庫存數量: <span class="quantity-value {% if data['quantity']|int <= 300 %}red{% endif %}">{{ data['quantity'] }}</span></p>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var urlInput = document.getElementById('url-input');
+      var savedUrls = localStorage.getItem('savedUrls');
+
+      if (savedUrls) {
+        urlInput.value = savedUrls;
+      }
+
+      urlInput.addEventListener('input', function() {
+        localStorage.setItem('savedUrls', urlInput.value);
+      });
+    });
+  </script>
+</body>
+</html>
